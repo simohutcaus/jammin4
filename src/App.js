@@ -12,19 +12,39 @@ class App extends Component {
     super(props);
     this.state = {
       searchTracks: [],
-      playList: []
+      playListTracks: [],
+      playListName: "test"
       
     }
     this.searchSpotify = this.searchSpotify.bind(this);
     this.addTrack = this.addTrack.bind(this);
+    this.removeTrack = this.removeTrack.bind(this);
+    this.updatedPlayListName = this.updatedPlayListName.bind(this);
   }
 
   searchSpotify() {
   SpotifySearch.search().then(tracks => this.setState({searchTracks: tracks}));
   }
 
-  addTrack() {
-    console.log("test");
+  addTrack(track) {
+    let newPlayList = this.state.playListTracks;
+    if (this.state.playListTracks.indexOf(track) === -1) {
+      newPlayList.push(track);
+      this.setState({ playListTracks: newPlayList });
+    }
+  }
+
+  removeTrack(track){
+    this.setState({
+      playlistTracks: this.state.playListTracks.filter(playListTrack => {
+         playListTrack.id !== track.id})
+    })
+}
+
+  updatedPlayListName(name) {
+    this.setState({
+      playListName: name
+    })
   }
 
 
@@ -35,10 +55,9 @@ class App extends Component {
         <div class="App-playlist">
           <div class="SearchResults">
             <h2>Results</h2>
-          <TrackList searchTracks={this.state.searchTracks} addTrack={this.addTrack} />
-          <Playlist />
+          <TrackList searchTracks={this.state.searchTracks} onAdd={this.addTrack} onRemove={this.onRemove} />
           </div>
-
+          <Playlist playListName={this.state.playListName} playList={this.state.playListTracks} onNameChange={this.updatedPlayListName} />
         </div>
         </div>
     );
